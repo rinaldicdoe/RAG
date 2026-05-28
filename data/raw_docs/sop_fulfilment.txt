@@ -1,0 +1,12 @@
+Judul: SOP Fulfilment Marketplace dan Internal
+Departemen: Logistik
+Versi: Approved 2026
+
+Definisi SLA:
+- Order marketplace mengikuti waktu kedaluwarsa platform.
+- Order internal memiliki SLA H+1 pukul 23:59.
+- Jika order internal masuk hari Sabtu, SLA dihitung ke hari Senin.
+
+Eskalasi:
+Jika terjadi kendala stok, SPV wajib menginformasikan ke SCM dan CS.
+Jika keterlambatan disebabkan stok kosong, CS wajib memberi update ke customer.

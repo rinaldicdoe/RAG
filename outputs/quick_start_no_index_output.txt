@@ -1,0 +1,3 @@
+=== QUICK START: RAG DENGAN OPENAI EMBEDDINGS ===
+Index embedding belum ditemukan.
+Jalankan dulu: python scripts/build_index.py

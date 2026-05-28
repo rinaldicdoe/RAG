@@ -1,0 +1,10 @@
+VALIDATION PASSED
+Total dokumen terbaca: 18
+Total chunk: 18
+Total PDF: 4
+Excel tersedia: True
+Database tersedia: True
+Total order database: 240
+Index OpenAI Embeddings tersedia: True
+OPENAI_API_KEY tersedia: True
+Embedding model default: text-embedding-3-small

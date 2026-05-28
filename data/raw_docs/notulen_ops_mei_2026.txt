@@ -1,0 +1,13 @@
+Notulen Operasional - 12 Mei 2026
+Topik: Penurunan SLA Fulfilment Mei 2026
+
+Keputusan:
+1. Kendala utama terjadi pada channel TikTok dan Shopee.
+2. Penyebab dominan adalah stok kosong dan antrean packing pada minggu kedua.
+3. PIC perbaikan stok adalah Tim SCM.
+4. PIC perbaikan jadwal packing adalah SPV Warehouse.
+5. Evaluasi ulang dilakukan pada 20 Mei 2026.
+
+Action item:
+- SCM memperbarui safety stock untuk SKU fast moving.
+- Warehouse menambah shift packing ketika order promo meningkat.
