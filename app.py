@@ -58,9 +58,13 @@ with st.sidebar:
     st.write("Index tersedia:", index_path.exists())
     st.write("API key tersedia:", bool(os.getenv("OPENAI_API_KEY")))
     st.write("Embedding model:", os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"))
+    st.write("Base URL:", os.getenv("OPENAI_BASE_URL") or "api.openai.com (default)")
     st.divider()
     st.markdown("**Deploy Streamlit Cloud:**")
-    st.caption("Set OPENAI_API_KEY di Settings → Secrets. Index dibuat otomatis saat pertama kali dibuka.")
+    st.caption(
+        "Set OPENAI_API_KEY dan OPENAI_BASE_URL di Settings → Secrets. "
+        "Index dibuat otomatis saat pertama kali dibuka."
+    )
 
 if not os.getenv("OPENAI_API_KEY"):
     st.warning(

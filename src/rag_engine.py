@@ -181,6 +181,24 @@ def _hash_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def make_openai_client():
+    """OpenAI client; supports custom gateway via OPENAI_BASE_URL (e.g. Sumopod)."""
+    if not os.getenv("OPENAI_API_KEY"):
+        raise RuntimeError(
+            "OPENAI_API_KEY belum ditemukan. Copy .env.example menjadi .env, "
+            "lalu isi OPENAI_API_KEY terlebih dahulu."
+        )
+
+    from openai import OpenAI
+
+    kwargs: Dict[str, Any] = {"api_key": os.getenv("OPENAI_API_KEY")}
+    base_url = os.getenv("OPENAI_BASE_URL", "").strip()
+    if base_url:
+        kwargs["base_url"] = base_url.rstrip("/")
+
+    return OpenAI(**kwargs)
+
+
 class OpenAIEmbeddingVectorStore:
     """
     Vector store sederhana berbasis OpenAI Embeddings.
@@ -206,14 +224,7 @@ class OpenAIEmbeddingVectorStore:
         self.items: List[Dict[str, Any]] = []
 
     def _client(self):
-        if not os.getenv("OPENAI_API_KEY"):
-            raise RuntimeError(
-                "OPENAI_API_KEY belum ditemukan. Copy .env.example menjadi .env, "
-                "lalu isi OPENAI_API_KEY terlebih dahulu."
-            )
-
-        from openai import OpenAI
-        return OpenAI()
+        return make_openai_client()
 
     def embed_texts(self, texts: List[str]) -> List[List[float]]:
         """Membuat embedding untuk list teks menggunakan OpenAI Embeddings API."""
@@ -372,7 +383,12 @@ def answer_from_context(question: str, contexts: List[Dict[str, Any]]) -> str:
     )
 
 
-def generate_answer_with_openai(question: str, contexts: List[Dict[str, Any]], model: str = "gpt-4.1-mini") -> str:
+def generate_answer_with_openai(
+    question: str,
+    contexts: List[Dict[str, Any]],
+    model: Optional[str] = None,
+) -> str:
+    model = model or os.getenv("OPENAI_CHAT_MODEL", "gpt-4.1-mini")
     """Opsional: gunakan chat model untuk menyusun jawaban dari konteks retrieval."""
     if not contexts:
         return "Informasi belum ditemukan dalam dokumen."
