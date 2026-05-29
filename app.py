@@ -15,11 +15,35 @@ except Exception:
 
 from rag_engine import (
     OpenAIEmbeddingVectorStore,
+    load_all_documents,
+    make_chunks,
     build_context_block,
     answer_from_context,
     generate_answer_with_openai,
     late_orders_summary,
 )
+
+
+def ensure_index(index_path: Path) -> bool:
+    """Build embedding index if missing (needed on Streamlit Cloud deploy)."""
+    if index_path.exists():
+        return True
+
+    if not os.getenv("OPENAI_API_KEY"):
+        return False
+
+    raw_folder = ROOT / "data" / "raw_docs"
+    docs = load_all_documents(raw_folder)
+    chunks = make_chunks(docs, chunk_size=900, overlap=150)
+
+    store = OpenAIEmbeddingVectorStore(
+        model=os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"),
+        index_path=index_path,
+        batch_size=32,
+    )
+    store.build(chunks)
+    store.save()
+    return True
 
 st.set_page_config(page_title="RAG KB - OpenAI Embeddings", layout="wide")
 
@@ -35,16 +59,25 @@ with st.sidebar:
     st.write("API key tersedia:", bool(os.getenv("OPENAI_API_KEY")))
     st.write("Embedding model:", os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"))
     st.divider()
-    st.markdown("**Urutan menjalankan:**")
-    st.code("python scripts/build_index.py\nstreamlit run app.py", language="bash")
-
-if not index_path.exists():
-    st.warning("Index embedding belum ada. Jalankan dulu: python scripts/build_index.py")
-    st.stop()
+    st.markdown("**Deploy Streamlit Cloud:**")
+    st.caption("Set OPENAI_API_KEY di Settings → Secrets. Index dibuat otomatis saat pertama kali dibuka.")
 
 if not os.getenv("OPENAI_API_KEY"):
-    st.warning("OPENAI_API_KEY belum ada. Copy .env.example menjadi .env, lalu isi API key.")
+    st.warning(
+        "OPENAI_API_KEY belum ada. Lokal: isi file `.env`. "
+        "Streamlit Cloud: Settings → Secrets → tambahkan `OPENAI_API_KEY`."
+    )
     st.stop()
+
+if not index_path.exists():
+    with st.spinner("Index embedding belum ada. Membuat index pertama kali (±1–2 menit)..."):
+        try:
+            if not ensure_index(index_path):
+                st.error("Gagal membuat index embedding.")
+                st.stop()
+        except Exception as exc:
+            st.error(f"Gagal membuat index embedding: {exc}")
+            st.stop()
 
 question = st.text_input(
     "Pertanyaan",
